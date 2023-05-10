@@ -8,12 +8,43 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    let food = ["food1", "food2", "food3", "food4", "food5"]
+    @State private var selectedFood: String?
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+        VStack(spacing: 30) {
+            Image("lunch")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                
+                
+                
+            Text("Today Lunch")
+                .bold()
+                .font(.title)
+            
+            if selectedFood != .none{
+                
+                Text(selectedFood ?? "")
+                    .font(.largeTitle)
+                    .foregroundColor(.black)
+                
+            }
+            
+            Button("Tell me"){
+                selectedFood = food.randomElement()
+            }.font(.title)
+                .buttonStyle(.borderedProminent)
+            
+            
+            
+            Button("Reset"){
+                selectedFood = .none
+            }.font(.headline)
+            
+            
+            
         }
         .padding()
     }
