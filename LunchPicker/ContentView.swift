@@ -27,26 +27,45 @@ struct ContentView: View {
             if selectedFood != .none{
                 
                 Text(selectedFood ?? "")
+                    .id(selectedFood)
                     .font(.largeTitle)
                     .foregroundColor(.black)
+                    .transition(.asymmetric(insertion: .opacity.animation(.easeOut(duration: 0.5).delay(0.2)), removal: .opacity.animation(.easeInOut(duration: 0.4))))
                 
             }
+            Button {
+                withAnimation{
+                    selectedFood = food.randomElement()
+                }
+            } label: {
+                Text(selectedFood == .none ? "Tell me": "Change").frame(width: 200)
+                    .transformEffect(.identity)
+            }
+            .font(.title)
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.capsule)
+            .controlSize(.large)
+            .padding(.bottom, -10)
             
-            Button("Tell me"){
-                selectedFood = food.randomElement()
-            }.font(.title)
-                .buttonStyle(.borderedProminent)
+
             
             
             
             Button("Reset"){
-                selectedFood = .none
-            }.font(.headline)
+                withAnimation {
+                    selectedFood = .none
+                }
+            }
+            .font(.headline)
+            .controlSize(.large)
             
             
             
         }
         .padding()
+        .frame(maxHeight: .infinity)
+        .background(Color(.secondarySystemBackground))
+//        .animation(.easeInOut, value: selectedFood)
     }
 }
 
