@@ -35,10 +35,46 @@ struct ContentView: View {
             .frame(maxWidth: .infinity)
             .animation(.spring(), value: shouldShowInfo)
         }
-        .background(Color(.secondarySystemBackground))
+        .background(Color.bg2)
     }
     
 }
+
+extension View{
+    func roundedRectBackground(radius: CGFloat = 8, fill: some ShapeStyle = Color.bg) -> some View{
+        background(RoundedRectangle(cornerRadius: radius)
+            .foregroundStyle(fill))
+    }
+    
+    func tellMeButton() -> some View{
+        buttonStyle(.borderedProminent)
+        .buttonBorderShape(.capsule)
+        .controlSize(.large)
+        .font(.title)
+        .padding(.bottom, -10)
+    }
+    
+    func resetButton() -> some View{
+        font(.headline)
+        .controlSize(.large)
+    }
+}
+
+extension Color{
+    static let bg = Color(.systemBackground)
+    static let bg2 = Color(.secondarySystemBackground)
+}
+
+extension AnyTransition {
+    static let foodNameTransition = Self.asymmetric(
+        insertion: .opacity
+            .animation(.easeOut(duration: 0.5).delay(0.2)),
+        removal: .opacity
+            .animation(.easeInOut(duration: 0.4)))
+        
+}
+
+
 // MARK: - SubView
 private extension ContentView{
     @ViewBuilder var selectedFoodNameView: some View{
@@ -58,9 +94,11 @@ private extension ContentView{
                 .foregroundColor(.gray)
                 .font(.title)
             }
-            .transition(.asymmetric(insertion: .opacity.animation(.easeOut(duration: 0.5).delay(0.2)), removal: .opacity.animation(.easeInOut(duration: 0.4))))
+            .transition(AnyTransition.foodNameTransition)
             
         }
+        .frame(maxWidth: .infinity)
+        .clipped()
     }
     
     @ViewBuilder var selectedFoodInfoView: some View {
@@ -93,7 +131,7 @@ private extension ContentView{
                 .padding()
                 .foregroundColor(.gray)
                 .font(.title3)
-                .background(RoundedRectangle(cornerRadius: 15).foregroundColor(.white))
+                .roundedRectBackground()
             }
             
         }
@@ -109,11 +147,7 @@ private extension ContentView{
             Text(selectedFood?.name == .none ? "Tell me": "Change").frame(width: 200)
                 .transformEffect(.identity)
         }
-        .font(.title)
-        .buttonStyle(.borderedProminent)
-        .buttonBorderShape(.capsule)
-        .controlSize(.large)
-        .padding(.bottom, -10)
+        .tellMeButton()
         
         Button("Reset"){
             withAnimation {
@@ -121,8 +155,7 @@ private extension ContentView{
                 shouldShowInfo = false
             }
         }
-        .font(.headline)
-        .controlSize(.large)
+        .resetButton()
     }
 }
 
