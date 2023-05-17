@@ -9,63 +9,114 @@ import SwiftUI
 
 struct ContentView: View {
     
-    let food = ["food1", "food2", "food3", "food4", "food5"]
-    @State private var selectedFood: String?
+    let food = Foods.examples
+    @State private var selectedFood: Foods?
+    @State private var showInfo: Bool = false
     
     var body: some View {
-        VStack(spacing: 30) {
-            Image("lunch")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
+        ScrollView{
+            VStack(spacing: 30) {
+                
+                Image("lunch")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
                 
                 
                 
-            Text("Today Lunch")
-                .bold()
+                Text("Today Lunch")
+                    .bold()
+                    .font(.title)
+                
+                if selectedFood?.name != .none{
+                    
+                    HStack{
+                        Group{
+                            Text(selectedFood!.name)
+                                .id(selectedFood!.name)
+                                .foregroundColor(.black)
+                                .font(.largeTitle)
+                            Button {
+                                withAnimation{
+                                    showInfo.toggle()
+                                }
+                            } label: {
+                                Text(Image(systemName: "info.circle.fill"))
+                            }
+                            .foregroundColor(.gray)
+                            .font(.title)
+                        }
+                        .transition(.asymmetric(insertion: .opacity.animation(.easeOut(duration: 0.5).delay(0.2)), removal: .opacity.animation(.easeInOut(duration: 0.4))))
+                        
+                    }
+                    if showInfo == true {
+                        Text("Calorie: " + selectedFood!.calorie.formatted())
+                            .foregroundColor(.black)
+                            .font(.title2)
+                        
+                        
+                        Grid(horizontalSpacing: 12, verticalSpacing: 12){
+                            GridRow{
+                                Text("Carb")
+                                Text("Fat")
+                                Text("Protein")
+                            }.frame(minWidth: 60)
+                            
+                            Divider()
+                                .gridCellUnsizedAxes(.horizontal)
+                                .padding(.horizontal, -10)
+                            
+                            GridRow{
+                                Text(selectedFood!.carb.formatted() + " g")
+                                Text(selectedFood!.fat.formatted() + " g")
+                                Text(selectedFood!.protein.formatted() + " g")
+                            }
+                        }
+                        .padding()
+                        .foregroundColor(.gray)
+                        .font(.title3)
+                        .background(RoundedRectangle(cornerRadius: 15).foregroundColor(.white))
+                    }
+                    
+                }
+                
+                
+                Button {
+                    withAnimation{
+                        selectedFood = food.randomElement()
+                        showInfo = false
+                    }
+                } label: {
+                    Text(selectedFood?.name == .none ? "Tell me": "Change").frame(width: 200)
+                        .transformEffect(.identity)
+                }
                 .font(.title)
-            
-            if selectedFood != .none{
+                .buttonStyle(.borderedProminent)
+                .buttonBorderShape(.capsule)
+                .controlSize(.large)
+                .padding(.bottom, -10)
                 
-                Text(selectedFood ?? "")
-                    .id(selectedFood)
-                    .font(.largeTitle)
-                    .foregroundColor(.black)
-                    .transition(.asymmetric(insertion: .opacity.animation(.easeOut(duration: 0.5).delay(0.2)), removal: .opacity.animation(.easeInOut(duration: 0.4))))
+                
+                
+                
+                
+                Button("Reset"){
+                    withAnimation {
+                        selectedFood = .none
+                        showInfo = false
+                    }
+                }
+                .font(.headline)
+                .controlSize(.large)
+                
+                
                 
             }
-            Button {
-                withAnimation{
-                    selectedFood = food.randomElement()
-                }
-            } label: {
-                Text(selectedFood == .none ? "Tell me": "Change").frame(width: 200)
-                    .transformEffect(.identity)
-            }
-            .font(.title)
-            .buttonStyle(.borderedProminent)
-            .buttonBorderShape(.capsule)
-            .controlSize(.large)
-            .padding(.bottom, -10)
+            .padding()
+            .frame(maxWidth: .infinity)
+            .animation(.spring(), value: showInfo)
             
-
-            
-            
-            
-            Button("Reset"){
-                withAnimation {
-                    selectedFood = .none
-                }
-            }
-            .font(.headline)
-            .controlSize(.large)
-            
-            
-            
-        }
-        .padding()
-        .frame(maxHeight: .infinity)
-        .background(Color(.secondarySystemBackground))
-//        .animation(.easeInOut, value: selectedFood)
+            //        .animation(.easeInOut, value: selectedFood)
+        }.background(Color(.secondarySystemBackground))
     }
 }
 
